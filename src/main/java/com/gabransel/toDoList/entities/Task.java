@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import org.hibernate.annotations.CreationTimestamp;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +19,9 @@ public class Task {
     private Long id;
     private String title;
     private String description;
+
     private LocalDate dateConclusion;
+    @CreationTimestamp
     private LocalDateTime dateCriation;
     private boolean done = false;
 
@@ -94,13 +98,13 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Tarefa{" +
+        return "Task{" +
                 "id=" + id +
-                ", titulo='" + title + '\'' +
-                ", descricao='" + description + '\'' +
-                ", dataConclusao=" + dateConclusion +
-                ", dataCriacao=" + dateConclusion +
-                ", concluida=" + done +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", dateConclusion=" + dateConclusion +
+                ", dateCriation=" + dateCriation +
+                ", done=" + done +
                 '}';
     }
 }
