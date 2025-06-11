@@ -26,7 +26,7 @@ public class TaskService {
     @Transactional
     public Task createTask(TaskDTO taskDTO) {
 
-        if (taskRepository.existsByTitleIgnoreCaseAndDataConclusion(taskDTO.getTitle(), taskDTO.getDateConclusion())){
+        if (taskRepository.existsByTitleIgnoreCaseAndDateConclusion(taskDTO.getTitle(), taskDTO.getDateConclusion())){
             throw new TaskDuplicateException(
                     " Já existe tarefa com o título '" + taskDTO.getTitle() +
                             "' para a data " + taskDTO.getDateConclusion());
@@ -45,7 +45,7 @@ public class TaskService {
 
         if(!task.getTitle().equals(dto.getTitle()) || !task.getDateCriation().equals(dto.getDateConclusion())) {
 
-            if (taskRepository.existsByTitleIgnoreCaseAndDataConclusion(dto.getTitle(), dto.getDateConclusion())) {
+            if (taskRepository.existsByTitleIgnoreCaseAndDateConclusion(dto.getTitle(), dto.getDateConclusion())) {
                 throw new TaskDuplicateException(
                         "Já existe uma tarefa com o novo título e data informados.");
             }
@@ -68,7 +68,7 @@ public class TaskService {
     @Transactional(readOnly = true)
     public Task searchTask(String title, LocalDate dateConclusion) {
        return taskRepository
-               .findByTitleIgnoreCaseAndDataConclusion(title,dateConclusion)
+               .findByTitleIgnoreCaseAndDateConclusion(title,dateConclusion)
                .orElseThrow(() ->new TaskNotFoundException(
                        "Tarefa com título ' " + title +
                                "' e data" + dateConclusion +" não encontrada"));

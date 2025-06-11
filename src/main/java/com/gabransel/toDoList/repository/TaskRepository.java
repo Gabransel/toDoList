@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    Optional<Task> findByTitleIgnoreCaseAndDataConclusion(String title, LocalDate dateConclusion);
+    Optional<Task> findByTitleIgnoreCaseAndDateConclusion(String title, LocalDate dateConclusion);
 
-    boolean existsByTitleIgnoreCaseAndDataConclusion(String title, LocalDate dataConclusion);
+    boolean existsByTitleIgnoreCaseAndDateConclusion(String title, LocalDate dataConclusion);
 
     List<Task> findByTitleContainingIgnoreCase(String title);
 
