@@ -1,6 +1,7 @@
 package com.gabransel.toDoList.controller;
 
 import com.gabransel.toDoList.dto.TaskDTO;
+import com.gabransel.toDoList.dto.TaskResponseDTO;
 import com.gabransel.toDoList.entities.Task;
 import com.gabransel.toDoList.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +26,27 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO dto) {
-        TaskDTO taskCreated = taskService.createTask(dto);
+    public ResponseEntity<TaskResponseDTO> create(@RequestBody TaskDTO dto) {
+        TaskResponseDTO taskCreated = taskService.createTask(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskCreated);
     }
 
     @GetMapping
-    public ResponseEntity<TaskDTO> search(
+    public ResponseEntity<TaskResponseDTO> search(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date) {
 
-        TaskDTO task = taskService.searchTask(title, date);
+        TaskResponseDTO task = taskService.searchTask(title, date);
         return ResponseEntity.ok(task);
     }
 
     @PutMapping
-    public ResponseEntity<TaskDTO> update(
+    public ResponseEntity<TaskResponseDTO> update(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam TaskDTO dto) {
 
-        TaskDTO taskUpdated = taskService.updateTask(title, date, dto);
+        TaskResponseDTO taskUpdated = taskService.updateTask(title, date, dto);
         return ResponseEntity.ok(taskUpdated);
     }
 

@@ -1,6 +1,7 @@
 package com.gabransel.toDoList.service;
 
 import com.gabransel.toDoList.dto.TaskDTO;
+import com.gabransel.toDoList.dto.TaskResponseDTO;
 import com.gabransel.toDoList.entities.Task;
 import com.gabransel.toDoList.exceptions.TaskDuplicateException;
 import com.gabransel.toDoList.exceptions.TaskLateException;
@@ -14,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.gabransel.toDoList.mappers.TaskMapper.taskDtoToTask;
-import static com.gabransel.toDoList.mappers.TaskMapper.taskToTaskDto;
+import static com.gabransel.toDoList.mappers.TaskMapper.*;
 
 //TODO: melhore o inglês das classes e a clareza do que você está codando. Por exemplo, "criation" está incorreto, o correto é "Creation". Use o linguee para te auxiliar.
 //TODO: Quando eu digo a clareza é mudar de "taskStatus" para "getTaskStatus" ou "ReceiveTaskStatus".
@@ -30,14 +30,14 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO createTask(TaskDTO taskDTO) {
+    public TaskResponseDTO createTask(TaskDTO taskDTO) {
 
         if (taskRepository.existsByTitleIgnoreCaseAndDateConclusion(taskDTO.getTitle(), taskDTO.getDateConclusion())){
             throw new TaskDuplicateException(
                     " Já existe tarefa com o título '" + taskDTO.getTitle() +
                             "' para a data " + taskDTO.getDateConclusion());
         }
-        Task task = taskDtoToTask(taskDTO);
+        Task task = taskRequestDtoToTask(taskDTO);
         //Aqui eu retornei o nosso mapper passando o objeto Task que já havia sido gerado tbm por um outro mapper
         //Você estava retornado para o controller o seu 'entity'. Você deveria retornar um DTO. Resumidamente... você recebe um DTO do cliente e devolve um DTO
         return taskToTaskDto(
@@ -46,7 +46,7 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskDTO updateTask(String title, LocalDate dateConclusion, TaskDTO dto) {
+    public TaskResponseDTO updateTask(String title, LocalDate dateConclusion, TaskDTO dto) {
         //Devido a forma que você construiu a classe task e a taskdto eu precisei voltar ele para entity para depois transforma-lo em um DTO novamente após passar pelo banco.
         Task task = taskDtoToTask(searchTask(title, dateConclusion));
         /**
@@ -68,12 +68,12 @@ public class TaskService {
 
     @Transactional
     public void deleteTask(String title, LocalDate dateConclusion){
-        Task task = taskDtoToTask(searchTask(title, dateConclusion));
-        taskRepository.delete(task);
+        TaskResponseDTO task = searchTask(title, dateConclusion);
+        taskRepository.deleteById(task.getId());
     }
 
     @Transactional(readOnly = true)
-    public List<TaskDTO> listAllTasks(){
+    public List<TaskResponseDTO> listAllTasks(){
         return taskRepository.findAll()
                 .stream()
                 .map(t -> taskToTaskDto(t)) //Aqui eu usei uma forma simplificada mas abaixo vou deixar um comentário usando Method Reference
@@ -85,7 +85,7 @@ public class TaskService {
     }
 
     @Transactional(readOnly = true)
-    public TaskDTO searchTask(String title, LocalDate dateConclusion) {
+    public TaskResponseDTO searchTask(String title, LocalDate dateConclusion) {
        return taskRepository
                .findByTitleIgnoreCaseAndDateConclusion(title,dateConclusion)
                .map(TaskMapper::taskToTaskDto) //usei method reference
@@ -96,7 +96,7 @@ public class TaskService {
 
     @Transactional(readOnly = true)
     public String taskStatus(String title, LocalDate dateConclusion) {
-        TaskDTO task = searchTask(title, dateConclusion);
+        TaskResponseDTO task = searchTask(title, dateConclusion);
 
         if (taskDtoToTask(task).isDone()) {
             //Aqui você poderia retornar um DTO que carrega essa mensagem e não somente o texto.
