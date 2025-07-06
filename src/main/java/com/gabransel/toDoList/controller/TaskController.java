@@ -19,37 +19,39 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @Autowired
+    //Não precisa de autowired quando se faz a injeção de dependência dessa forma (via constructor)
     public TaskController(TaskService taskService){
         this.taskService = taskService;
     }
 
-    public ResponseEntity<Task> create(@RequestBody TaskDTO dto) {
-        Task taskCreated = taskService.createTask(dto);
+    @PostMapping
+    public ResponseEntity<TaskDTO> create(@RequestBody TaskDTO dto) {
+        TaskDTO taskCreated = taskService.createTask(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(taskCreated);
     }
 
     @GetMapping
-    public ResponseEntity<Task> search(
+    public ResponseEntity<TaskDTO> search(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate date) {
 
-        Task task = taskService.searchTask(title, date);
+        TaskDTO task = taskService.searchTask(title, date);
         return ResponseEntity.ok(task);
     }
 
     @PutMapping
-    public ResponseEntity<Task> update(
+    public ResponseEntity<TaskDTO> update(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam TaskDTO dto) {
 
-        Task taskUpdated = taskService.updateTask(title, date, dto);
+        TaskDTO taskUpdated = taskService.updateTask(title, date, dto);
         return ResponseEntity.ok(taskUpdated);
     }
 
+    //Aqui você pode usar Void invés de passar o "taskDto".
     @DeleteMapping
-    public ResponseEntity<Task> delete(
+    public ResponseEntity<Void> delete(
             @RequestParam String title,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
